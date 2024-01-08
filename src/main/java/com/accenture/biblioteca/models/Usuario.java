@@ -8,17 +8,22 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor
 @ToString
 @Entity
+@Data
 @Table(name = "usuarios")
 
 public class Usuario {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String nombre;
+    @Column
     private String direccion;
+    @Column
     private String telefono;
     @Column(unique = true)
     private String email;
-    private String pass;
+    @Column
+    private String password;
 
 }
