@@ -17,10 +17,16 @@ public class Libro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idLibro;
     private String titulo;
-    private Long autor;
+    @ManyToOne
+    @JoinColumn(name = "autor")
+    private Autor autor;
     private String portada;
     private String anyo;
     private Long isbn;
-    private Long editorial;
-    private Long genero;
+    @ManyToOne
+    @JoinColumn(name = "editorial")
+    private Editorial editorial;
+    @ManyToOne
+    @JoinColumn(name = "genero")
+    private Genero genero;
 }
