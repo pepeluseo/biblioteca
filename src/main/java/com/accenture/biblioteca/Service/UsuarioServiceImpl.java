@@ -18,6 +18,13 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public Usuario nuevoUsuario(Usuario nuevoUsuario) {
+        Optional<Usuario> usuarioExistente = usuarioRepository.findById(nuevoUsuario.getId());
+        if (usuarioExistente.isPresent()){
+            // La ID del nuevo usuario ya existe, no se puede crear un usuario con una ID existente.
+            // En este caso, se devuelve null
+            return null;
+        }
+            //la ID del nuevo usuario es única y podemos guardarlo.
         return usuarioRepository.save(nuevoUsuario);
     }
 
@@ -28,22 +35,34 @@ public class UsuarioServiceImpl implements UsuarioService{
 
     @Override
     public Usuario usuarioModificado(Usuario usuario) {
-        Optional<Usuario> usuarioEncontrado = this.usuarioRepository.findById(usuario.getId());
-        if (usuarioEncontrado.get() !=null){
-            usuarioEncontrado.get().setNombre(usuario.getNombre());
-            usuarioEncontrado.get().setDireccion(usuario.getDireccion());
-            usuarioEncontrado.get().setTelefono(usuario.getTelefono());
-            usuarioEncontrado.get().setEmail(usuario.getEmail());
-            return this.nuevoUsuario(usuarioEncontrado.get());
+        Optional<Usuario> usuarioEncontrado= this.usuarioRepository.findById(usuario.getId());
+        if(usuarioEncontrado.isPresent()){
+            Usuario usuarioExistente = usuarioEncontrado.get();
+            if (!usuarioExistente.getId().equals(usuario.getId())) {
+                // El ID del usuario que estás tratando de modificar no coincide con el ID de otro usuario existente.
+                // se devuelve null
+                return null;
+            }
 
+            usuarioExistente.setNombre(usuario.getNombre());
+            usuarioExistente.setDireccion(usuario.getDireccion());
+            usuarioExistente.setTelefono(usuario.getTelefono());
+            usuarioExistente.setEmail(usuario.getEmail());
+            return this.usuarioRepository.save(usuarioExistente);
         }
         return null;
     }
 
     @Override
     public Boolean esUsuarioBorrado(Long id) {
-        this.usuarioRepository.deleteById(id);
-        return true;
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+
+        if (usuarioOptional.isPresent()) {
+            usuarioRepository.deleteById(id);
+            return true;
+        } else {
+            return false; // Usuario no encontrado, no se realiza la eliminación.
+        }
     }
 
     @Override
